@@ -29,3 +29,4 @@ target/
 .spectra.yaml
 openspec/
 CLAUDE.md
+openspec/.vector-search.db*

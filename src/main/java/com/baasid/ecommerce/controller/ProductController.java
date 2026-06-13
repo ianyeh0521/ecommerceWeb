@@ -3,6 +3,7 @@ package com.baasid.ecommerce.controller;
 import com.baasid.ecommerce.dto.request.ProductRequest;
 import com.baasid.ecommerce.dto.response.ProductResponse;
 import com.baasid.ecommerce.service.ProductService;
+import com.baasid.ecommerce.security.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -67,7 +68,6 @@ public class ProductController {
     }
 
     private boolean isAdmin(Authentication authentication) {
-        return authentication != null && authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        return SecurityUtils.isAdmin(authentication);
     }
 }
