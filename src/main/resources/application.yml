@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: ecommerce
+
+jwt:
+  secret: bY2aEAWybCavUvwFoPri/TsrGWoHiRGSMLpZJSlUZ/0=
+
