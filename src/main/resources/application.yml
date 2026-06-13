@@ -1,7 +1,15 @@
 spring:
   application:
     name: ecommerce
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommerce
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
 
 jwt:
   secret: bY2aEAWybCavUvwFoPri/TsrGWoHiRGSMLpZJSlUZ/0=
-
