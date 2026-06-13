@@ -1,0 +1,8 @@
+debug: false
+
+logging:
+  level:
+    root: WARN
+
+jwt:
+  secret: bY2aEAWybCavUvwFoPri/TsrGWoHiRGSMLpZJSlUZ/0=
