@@ -21,8 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -42,7 +44,15 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse createOrder(OrderRequest request, Long userId) {
         List<OrderItemRequest> items = request.getItems();
 
-        // Step 1 & 2:檢查商品是否存在及庫存
+        // Step 1: 避免重複下單
+        Set<Long> seen = new HashSet<>();
+        for (OrderItemRequest item : items) {
+            if (!seen.add(item.getProductId())) {
+                throw new BadRequestException("訂單內不可重複下相同商品");
+            }
+        }
+
+        // Step 2: 檢查商品是否存在及庫存
         List<Product> products = new ArrayList<>();
         for (OrderItemRequest item : items) {
             Product product = productRepository.findById(item.getProductId()).orElse(null);
