@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
         Map<String, String> body = new HashMap<>();
         FieldError fieldError = ex.getBindingResult().getFieldError();
         if (fieldError != null) {
-            body.put("error", "欄位驗證失敗：" + fieldError.getField() + " 不可為空");
+            body.put("error", "欄位驗證失敗：" + fieldError.getField() + " " + fieldError.getDefaultMessage());
         } else {
             body.put("error", "欄位驗證失敗");
         }

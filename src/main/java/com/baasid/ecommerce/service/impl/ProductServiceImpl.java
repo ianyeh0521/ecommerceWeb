@@ -40,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
         product.setName(request.getName());
         product.setPrice(request.getPrice());
         product.setStock(request.getStock());
-        product.setIsPublished(false);
+        product.setIsPublished(request.getIsPublished() != null && request.getIsPublished());
         product.setIsDeleted(false);
         Product saved = productRepository.save(product);
 
