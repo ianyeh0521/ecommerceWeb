@@ -1,0 +1,1 @@
+CREATE INDEX idx_products_visibility ON products(is_deleted, is_published);

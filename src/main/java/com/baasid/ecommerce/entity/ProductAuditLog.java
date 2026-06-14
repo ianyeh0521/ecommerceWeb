@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductAuditLog {
+public class
+ProductAuditLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

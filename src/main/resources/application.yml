@@ -5,11 +5,23 @@ spring:
     url: jdbc:postgresql://localhost:5432/ecommerce
     username: postgres
     password: postgres
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+      connection-timeout: 30000
   jpa:
     hibernate:
       ddl-auto: validate
   flyway:
     enabled: true
+
+server:
+  tomcat:
+    max-connections: 30000
+    accept-count: 5000
+    threads:
+      max: 800
+      min-spare: 20
 
 jwt:
   secret: bY2aEAWybCavUvwFoPri/TsrGWoHiRGSMLpZJSlUZ/0=
