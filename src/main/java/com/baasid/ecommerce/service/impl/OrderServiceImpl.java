@@ -15,6 +15,9 @@ import com.baasid.ecommerce.repository.OrderRepository;
 import com.baasid.ecommerce.repository.ProductRepository;
 import com.baasid.ecommerce.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -139,21 +142,49 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getOrders(Long userId, boolean isAdmin) {
-        List<Order> orders;
+    public Page<OrderResponse> getOrders(Long userId, boolean isAdmin, Pageable pageable) {
+        Page<Order> orderPage;
         if (isAdmin) {
-            orders = orderRepository.findAll();
+            orderPage = orderRepository.findAll(pageable);
         } else {
-            orders = orderRepository.findByUserId(userId);
+            orderPage = orderRepository.findByUserId(userId, pageable);
+        }
+
+        List<Order> orders = orderPage.getContent();
+        if (orders.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        List<UUID> orderIds = new ArrayList<>();
+        for (Order order : orders) {
+            orderIds.add(order.getId());
+        }
+        List<OrderItem> allItems = orderItemRepository.findByOrderIdIn(orderIds);
+
+        List<Long> productIds = new ArrayList<>();
+        for (OrderItem item : allItems) {
+            productIds.add(item.getProductId());
+        }
+        Map<Long, Product> productMap = new HashMap<>();
+        for (Product p : productRepository.findAllById(productIds)) {
+            productMap.put(p.getId(), p);
+        }
+
+        Map<UUID, List<OrderItem>> itemsByOrder = new HashMap<>();
+        for (OrderItem item : allItems) {
+            itemsByOrder.computeIfAbsent(item.getOrderId(), k -> new ArrayList<>()).add(item);
         }
 
         List<OrderResponse> result = new ArrayList<>();
         for (Order order : orders) {
-            List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
-            List<Product> products = loadProducts(items);
+            List<OrderItem> items = itemsByOrder.getOrDefault(order.getId(), new ArrayList<>());
+            List<Product> products = new ArrayList<>();
+            for (OrderItem item : items) {
+                products.add(productMap.get(item.getProductId()));
+            }
             result.add(buildResponse(order, items, products));
         }
-        return result;
+        return new PageImpl<>(result, pageable, orderPage.getTotalElements());
     }
 
     @Override

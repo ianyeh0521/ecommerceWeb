@@ -277,11 +277,11 @@ class OrderIntegrationTest extends AbstractIntegrationTest {
         createOrder(userToken, product.getId(), 1);
 
         HttpEntity<Void> entity = new HttpEntity<>(bearerHeaders(userToken));
-        ResponseEntity<List> resp = restTemplate.exchange("/api/orders", HttpMethod.GET, entity, List.class);
+        ResponseEntity<Map> resp = restTemplate.exchange("/api/orders", HttpMethod.GET, entity, Map.class);
 
         assertEquals(HttpStatus.OK, resp.getStatusCode());
         assertNotNull(resp.getBody());
-        assertFalse(resp.getBody().isEmpty());
+        assertFalse(((List<?>) resp.getBody().get("content")).isEmpty());
     }
 
     // 11.5 — ADMIN sees all orders
@@ -292,11 +292,11 @@ class OrderIntegrationTest extends AbstractIntegrationTest {
         createOrder(userToken, product.getId(), 1);
 
         HttpEntity<Void> entity = new HttpEntity<>(bearerHeaders(adminToken));
-        ResponseEntity<List> resp = restTemplate.exchange("/api/orders", HttpMethod.GET, entity, List.class);
+        ResponseEntity<Map> resp = restTemplate.exchange("/api/orders", HttpMethod.GET, entity, Map.class);
 
         assertEquals(HttpStatus.OK, resp.getStatusCode());
         assertNotNull(resp.getBody());
-        assertFalse(resp.getBody().isEmpty());
+        assertFalse(((List<?>) resp.getBody().get("content")).isEmpty());
     }
 
     // 11.5 — USER gets 404 for another user's order

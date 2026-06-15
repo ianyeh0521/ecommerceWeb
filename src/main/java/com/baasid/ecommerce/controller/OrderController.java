@@ -17,7 +17,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -41,10 +44,14 @@ public class OrderController {
 
     @Operation(summary = "查詢訂單列表；USER 查自己的，ADMIN 查全部")
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> getOrders(Authentication authentication) {
+    public ResponseEntity<Page<OrderResponse>> getOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            Authentication authentication) {
         Long userId = SecurityUtils.getUserId(authentication);
         boolean isAdmin = SecurityUtils.isAdmin(authentication);
-        return ResponseEntity.ok(orderService.getOrders(userId, isAdmin));
+        PageRequest pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return ResponseEntity.ok(orderService.getOrders(userId, isAdmin, pageable));
     }
 
     @Operation(summary = "查詢單一訂單；USER 只能查自己的")
